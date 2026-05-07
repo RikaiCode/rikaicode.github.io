@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rikaicode.github.io/sitemap.xml

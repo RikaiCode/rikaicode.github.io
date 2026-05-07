@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RikaiCode - Advanced Repository Flattener, Context Generator & Intelligent Grader</title>
+  
+
+  <meta name="description" content="RikaiCode is a sophisticated, browser-based tool designed to turn complex codebases into structured, actionable data. Flatten repositories for LLM context, grade code quality, and generate AI-powered insights. Free and open source.">
+  <meta name="keywords" content="RikaiCode, Repository Flattener, LLM Context Generator, Code Grader, Code Quality, Static Analysis, AI Code Review, GitHub Analyzer, GitLab Analyzer, Open Source, Streamlit, Python, GLM-4.7-Flash, Code Flattening, Repository Analysis, Code Intelligence, Developer Tools, AI Programming, Code Documentation">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="author" content="Vihaan Sahu">
+  <meta name="copyright" content="© 2026 Vihaan Sahu">
+  <link rel="canonical" href="https://rikaicode.github.io/">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+
+  <meta name="theme-color" content="#171717">
+  <meta name="googlebot" content="index, follow">
+
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="RikaiCode: Advanced Repository Flattener & Intelligent Grader">
+  <meta property="og:description" content="Turn complex codebases into structured, actionable data. Flatten for AI, Context for understanding, and Grading for quality. Free online tool.">
+  <meta property="og:image" content="assets/banner.png">
+  <meta property="og:url" content="https://rikaicode.github.io/">
+  <meta property="og:site_name" content="RikaiCode">
+  <meta property="og:locale" content="en_US">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RikaiCode: Repository Flattener & Intelligent Grader">
+  <meta name="twitter:description" content="Flatten repositories into LLM context, grade code quality (A++ to C), and visualize architecture.">
+  <meta name="twitter:image" content="assets/banner.png">
+
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "RikaiCode",
+    "operatingSystem": "Web Browser",
+    "applicationCategory": "DeveloperApplication",
+    "description": "RikaiCode turns complex codebases into structured data for LLMs and audits. Flatten repositories, grade code quality, and generate AI insights.",
+    "url": "https://rikaicode.github.io/",
+    
+    "creator": {
+      "@type": "Person",
+      "name": "Vihaan Sahu",
+      "url": "https://aurumz-rgb.github.io"
+    },
+    "license": "https://www.gnu.org/licenses/agpl-3.0",
+    "softwareVersion": "1.0.0"
+  }
+  </script>
+
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "RikaiCode",
+    "url": "https://rikaicode.github.io/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://rikaicode.github.io/?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <style>
+
+    :root {
+      --bg-body: #171717;
+      --bg-card: #1e1e1e;
+      --bg-card-hover: #252525;
+      --bg-accent: #121212;
+
+      --text-primary: #ededed;
+      --text-secondary: #b0b0b0;
+      --text-muted: #7c5e8a;
+
+      --border-color: #333;
+      --border-highlight: #444;
+
+      --primary: #d3a0eb;
+      --primary-glow: rgba(211, 160, 235, 0.25);
+      --primary-hover: #b589c8;
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+
+      --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-main);
+      line-height: 1.75;
+      color: var(--text-primary);
+      background-color: var(--bg-body);
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      overflow-x: hidden;
+      font-size: 18px;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-body); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+
+    .reveal {
+      position: relative;
+      transform: translateY(30px);
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.5, 0, 0, 1);
+    }
+    .reveal.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+
+    .header {
+      position: relative;
+      background: radial-gradient(circle at center, #1e1e1e 0%, #171717 100%);
+      color: white;
+      padding: 80px 0 100px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, var(--primary-glow) 0%, transparent 60%);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .header-content {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      z-index: 1;
+    }
+    
+    .logo-img {
+      width: 180px;
+      height: auto;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 0 15px rgba(211, 160, 235, 0.4));
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 18px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .title-white { color: #fff; }
+    .title-pink { color: var(--primary); }
+
+    .tagline {
+      font-size: 1.5rem;
+      margin-bottom: 35px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 35px;
+      padding: 25px;
+    }
+
+    .badges img {
+      height: 25px;
+      transition: all 0.3s ease;
+      filter: brightness(0.4);
+      border-radius: 4px;
+    }
+    
+    .badges img:hover {
+      filter: brightness(0.85);
+      transform: translateY(-3px);
+    }
+
+
+    .main-content {
+      padding: 70px 0 100px;
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .section {
+      margin-bottom: 55px;
+    }
+
+    h2 {
+      font-size: 2.6rem;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+    }
+
+    h2 .emoji {
+        margin-right: 14px;
+        font-style: normal;
+    }
+
+    h3 {
+      font-size: 1.7rem;
+      color: var(--text-primary);
+      margin-bottom: 18px;
+      font-weight: 600;
+      margin-top: 30px;
+    }
+
+    h4 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-weight: 600;
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 22px;
+      color: var(--text-secondary);
+      font-size: 1.15rem;
+      line-height: 1.8;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    code {
+      background: rgba(211, 160, 235, 0.1);
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      color: var(--primary);
+      border: 1px solid rgba(211, 160, 235, 0.2);
+    }
+
+
+    .main-links {
+      text-align: center;
+      margin: 55px 0;
+    }
+
+    .main-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #171717; 
+      padding: 16px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 10px;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      border: 1px solid transparent;
+    }
+
+    .main-links a.primary {
+      background: var(--primary);
+      box-shadow: 0 0 25px var(--primary-glow);
+    }
+
+    .main-links a.primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 0 35px var(--primary-glow);
+      text-decoration: none;
+    }
+    
+    .main-links a.secondary {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+    
+    .main-links a.secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin: 35px 0;
+    }
+
+    .tool {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    .tool:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+    }
+
+    .tool p {
+      color: var(--text-secondary);
+      margin-bottom: 0;
+      font-size: 1.05rem;
+    }
+
+   
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin: 30px 0;
+    }
+
+    .step {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .step:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #171717;
+      margin: 0 auto 18px auto;
+    }
+
+    .step h4 {
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 1.05rem;
+      margin-bottom: 0;
+    }
+
+
+    .ui-showcase {
+      margin-top: 25px;
+    }
+
+    .showcase-group {
+      margin-bottom: 45px;
+    }
+    
+    .showcase-group h3 {
+        font-size: 1.4rem;
+        color: var(--text-primary);
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+    }
+
+    .showcase-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      cursor: zoom-in;
+      transition: all 0.3s ease;
+      background-color: var(--bg-card);
+    }
+
+    .showcase-img:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    
+    @media (max-width: 768px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+        h1 { font-size: 3rem; }
+        body { font-size: 16px; }
+        h2 { font-size: 2rem; }
+        .badges img { height: 24px; }
+    }
+
+
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 25px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      min-width: 600px;
+    }
+
+    .styled-table th,
+    .styled-table td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 1.05rem;
+    }
+
+    .styled-table th {
+      background-color: var(--bg-body);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .styled-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .styled-table tr:hover td {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+   
+    .use-case-item {
+      margin-bottom: 25px;
+      padding-left: 20px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .use-case-item strong {
+      color: var(--primary);
+      font-size: 1.15rem;
+    }
+
+
+    .acknowledgement-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    
+    .ack-img {
+      max-width: 280px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+
+    footer {
+      background: #0e0e0e;
+      color: var(--text-secondary);
+      padding: 45px 0;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-content {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .footer-left p,
+    .footer-right p {
+      margin: 0;
+    }
+    
+    footer a { color: var(--text-secondary); }
+    footer a:hover { color: var(--primary); }
+
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.95);
+      backdrop-filter: blur(8px);
+    }
+    
+    .lightbox.show {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .lightbox-content { max-width: 90%; max-height: 90%; border-radius: 6px; }
+    
+    .close-lightbox {
+        position: absolute;
+        top: 25px;
+        right: 35px;
+        color: #fff;
+        font-size: 45px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .close-lightbox:hover { color: var(--primary); }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="lightbox" class="lightbox">
+    <span class="close-lightbox">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+  </div>
+
+  <!-- Header Section -->
+  <div class="header">
+    <div class="header-content">
+      <img src="assets/logo.png" alt="RikaiCode Logo" class="logo-img">
+      
+      <h1><span class="title-white">Rikai</span><span class="title-pink">Code.</span></h1>
+      
+      <p class="tagline">Advanced Repository Flattener, Context Generator & Intelligent Grader.</p>
+
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+
+      <!-- About Section -->
+      <div class="section reveal">
+        <h2><span class="emoji"></span> About</h2>
+        <p class="tagline">Flattening for AI, Context for understanding, and Grading for quality.</p>
+        <p>
+          RikaiCode is a sophisticated, browser-based tool designed to turn complex codebases into structured, actionable data. Whether you need to feed code into an LLM, audit a project's quality, or simply understand a new architecture, RikaiCode provides the insights you need in a beautiful interface.
+        </p>
+        <p>
+          It acts as a bridge between raw source code and actionable intelligence, offering features ranging from <strong>Repository Flattening</strong> for LLM context preparation to <strong>Intelligent Grading</strong> based on popularity, activity, and static code quality.
+        </p>
+      </div>
+
+      <!-- How to Use Section -->
+      <div class="section reveal">
+        <h2><span class="emoji">🚀</span> How to Use</h2>
+        <p>Getting started with RikaiCode is simple. Follow these steps to analyze your codebase:</p>
+        
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h4>Open RikaiCode</h4>
+            <p>Click the "Launch RikaiCode Online" button to open the web application in your browser.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h4>Provide Repository</h4>
+            <p>Enter a GitHub/GitLab URL or upload a local ZIP file containing your codebase.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h4>Choose Analysis</h4>
+            <p>Select from Flattening, Grading, AI Analysis, or Architecture Visualization features.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h4>Get Results</h4>
+            <p>View detailed reports, download flattened code, or explore AI-generated insights.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-links reveal">
+        <a href="https://github.com/aurumz-rgb/RikaiCode" target="_blank" class="secondary">GitHub Repository</a>
+        <a href="https://rikaicode.streamlit.app" target="_blank" class="primary">Launch RikaiCode Online</a>
+      </div>
+
+      <!-- Screenshots Section -->
+      <div class="section reveal">
+        <h2><span class="emoji">📸</span> Screenshots</h2>
+        <p>Preview of the available features and interface.</p>
+        
+        <div class="ui-showcase">
+          <div class="showcase-group">
+            <h3>Dashboard Overview</h3>
+            <div class="grid-1">
+              <img src="screenshots/1.png" alt="Dashboard Overview" class="showcase-img">
+            </div>
+
+            <div class="grid-2" style="margin-top: 24px;">
+              <img src="screenshots/2.png" alt="Code Statistics" class="showcase-img">
+              <img src="screenshots/3.png" alt="Charts" class="showcase-img">
+              <img src="screenshots/4.png" alt="File Distribution" class="showcase-img">
+              <img src="screenshots/5.png" alt="Architecture" class="showcase-img">
+            </div>
+          </div>
+
+          <div class="showcase-group">
+            <h3>AI Analysis & Flattener</h3>
+            <div class="grid-2">
+              <img src="screenshots/6.png" alt="AI Analysis" class="showcase-img">
+              <img src="screenshots/7.png" alt="Repository Flattener" class="showcase-img">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grading Logic Section -->
+      <div class="section reveal">
+        <h2><span class="emoji"></span> Intelligent Grading</h2>
+        <p>RikaiCode uses a <strong>100-point scoring system</strong>. The grade is determined by summing points across five key categories. The system switches between <strong>Remote Analysis</strong> (for GitHub/GitLab) and <strong>Static Analysis</strong> (for local files).</p>
+
+        <h3>Remote Repository Scoring</h3>
+        <div class="table-responsive">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Weight</th>
+                <th>Criteria</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Popularity</strong></td>
+                <td>30 pts</td>
+                <td>Based on Stars (0-20 pts) and Fork Ratio (0-10 pts). High stars indicate trust.</td>
+              </tr>
+              <tr>
+                <td><strong>Activity</strong></td>
+                <td>25 pts</td>
+                <td>Measures Recency (0-15 pts) and Commit Frequency (0-10 pts).</td>
+              </tr>
+              <tr>
+                <td><strong>Maintenance</strong></td>
+                <td>20 pts</td>
+                <td>Analyzes Open Issues Ratio and PR/MR Merge Rate.</td>
+              </tr>
+              <tr>
+                <td><strong>Community</strong></td>
+                <td>15 pts</td>
+                <td>Based on the number of Watchers.</td>
+              </tr>
+              <tr>
+                <td><strong>Stability</strong></td>
+                <td>10 pts</td>
+                <td>Active projects get full points; archived repos get 0.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Static Code Scoring</h3>
+        <div class="table-responsive">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Weight</th>
+                <th>Criteria</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Documentation</strong></td>
+                <td>30 pts</td>
+                <td>Checks for README files (10 pts) and Comment Density (20 pts).</td>
+              </tr>
+              <tr>
+                <td><strong>Structure</strong></td>
+                <td>30 pts</td>
+                <td>Modularity (avg lines per file) and Organization (entry points).</td>
+              </tr>
+              <tr>
+                <td><strong>Best Practices</strong></td>
+                <td>20 pts</td>
+                <td>Presence of dependency files (15 pts) and .gitignore (5 pts).</td>
+              </tr>
+              <tr>
+                <td><strong>Scale</strong></td>
+                <td>10 pts</td>
+                <td>Total lines of code. Larger, mature projects score slightly higher.</td>
+              </tr>
+              <tr>
+                <td><strong>Stability</strong></td>
+                <td>10 pts</td>
+                <td>Based on file count and structure.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AI Features Section -->
+      <div class="section reveal">
+        <h2><span class="emoji">🤖</span> AI Features</h2>
+      
+        <p>RikaiCode leverages the <strong>GLM-4.7-Flash</strong> model to provide intelligent insights that go beyond simple statistics.</p>
+        <img src="assets/GLM.png" alt="GLM Logo" class="ack-img">
+
+        <div class="tools">
+          <div class="tool">
+            <h4>Architecture Overview</h4>
+            <p>Identifies architectural patterns (e.g., MVC, Microservices) and summarizes the project's purpose.</p>
+          </div>
+          <div class="tool">
+            <h4>Project Synopsis</h4>
+            <p>Generates an "Executive Summary" including problem statement and target audience.</p>
+          </div>
+          <div class="tool">
+            <h4>Interactive Code Review</h4>
+            <p>Select any file to receive a detailed review covering strengths, improvements, and security checks.</p>
+          </div>
+          <div class="tool">
+            <h4>Function Explainer</h4>
+            <p>Specifically for Python. Select a function, and Rikai will explain its logic and edge cases.</p>
+          </div>
+          <div class="tool">
+            <h4>Complexity Analysis</h4>
+            <p>Estimates technical debt and complexity level based on file sizes.</p>
+          </div>
+          <div class="tool">
+            <h4>Developer Onboarding</h4>
+            <p>Creates a "Getting Started" guide with installation steps and run commands.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Use Cases Section -->
+      <div class="section reveal">
+        <h2><span class="emoji"></span> Use Cases</h2>
+        
+        <div class="use-case-item">
+          <p><strong>LLM Context Preparation:</strong> Flatten entire repositories into a single text file (TXT/JSON) to use as context for ChatGPT, Claude, or Gemini. It strips binaries and formats code perfectly for optimal token usage.</p>
+        </div>
+        
+        <div class="use-case-item">
+          <p><strong>Code Quality & Grading:</strong> Get an instant "Health Score" for any public repository. Analyze commit frequency, maintenance activity, and community engagement at a glance.</p>
+        </div>
+        
+        <div class="use-case-item">
+          <p><strong>Security Audits:</strong> Run heuristic scans to detect hardcoded API keys, AWS secrets, private keys, and other sensitive information that shouldn't be in your codebase.</p>
+        </div>
+        
+        <div class="use-case-item">
+          <p><strong>Architecture Onboarding:</strong> Visualize file structure, detect dependencies, and read AI-generated summaries to understand new projects in minutes instead of hours.</p>
+        </div>
+      </div>
+
+      <!-- Acknowledgements Section -->
+      <div class="section reveal">
+        <h2><span class="emoji"></span> License</h2>
+        <div class="acknowledgement-content">
+          <p>Open Source. Licensed Under AGPL-3.0.</p>
+          <a href="https://www.gnu.org/licenses/agpl-3.0">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/06/AGPLv3_Logo.svg" width="160" alt="AGPL v3 License"/>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-left">
+        <p>You made it this far — don't be shy, try Rikai! 🤍</p>
+      </div>
+      <div class="footer-right">
+        <p><a href="https://github.com/aurumz-rgb/RikaiCode" target="_blank">GitHub Repository</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+
+    window.addEventListener('scroll', reveal);
+    function reveal() {
+      var reveals = document.querySelectorAll('.reveal');
+      for (var i = 0; i < reveals.length; i++) {
+        var windowHeight = window.innerHeight;
+        var elementTop = reveals[i].getBoundingClientRect().top;
+        var elementVisible = 150;
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add('active');
+        }
+      }
+    }
+    reveal();
+
+
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementsByClassName('close-lightbox')[0];
+    const showcaseImages = document.querySelectorAll('.showcase-img');
+
+    showcaseImages.forEach(img => {
+      img.addEventListener('click', function () {
+        lightbox.classList.add('show');
+        lightboxImg.src = this.src;
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function hideLightbox() {
+      lightbox.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    closeBtn.addEventListener('click', hideLightbox);
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) hideLightbox();
+    });
+    
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hideLightbox();
+    });
+  </script>
+
+</body>
+</html>
