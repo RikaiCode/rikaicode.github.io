@@ -108,6 +108,19 @@
       
       <p class="tagline">Advanced Repository Flattener, Context Generator & Intelligent Grader.</p>
 
+      <div class="badges">
+        <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.12%2B-%23d3a0eb" alt="Python Version"></a>
+        <a href="https://opensource.org/licenses/AGPL-3.0"><img src="https://img.shields.io/badge/License-AGPL_3.0-%23d3a0eb" alt="License"></a>
+        <a href="https://zenodo.org/doi/10.5281/zenodo.20059448"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20059448.svg" alt="DOI"></a>
+        <a href="https://github.com/aurumz-rgb/RikaiCode/issues"><img src="https://img.shields.io/github/issues/aurumz-rgb/RikaiCode" alt="GitHub Issues"></a>
+        <a href="https://github.com/aurumz-rgb/RikaiCode/releases"><img src="https://img.shields.io/github/v/release/aurumz-rgb/RikaiCode" alt="Version"></a>
+        <a href="https://github.com/aurumz-rgb/RikaiCode/commits/main"><img src="https://img.shields.io/github/last-commit/aurumz-rgb/RikaiCode" alt="Last Commit"></a>
+        <a href="https://github.com/aurumz-rgb/RikaiCode/graphs/contributors"><img src="https://img.shields.io/github/contributors/aurumz-rgb/RikaiCode" alt="Contributors"></a>
+        <a href="https://github.com/aurumz-rgb/RikaiCode/actions/workflow/ci.yml">
+  <img src="https://github.com/aurumz-rgb/RikaiCode/actions/workflow/ci.yml/badge.svg" alt="CI Status">
+</a>
+      </div>
+
     </div>
   </div>
 
@@ -191,7 +204,7 @@
         <h2><span class="emoji"></span> Intelligent Grading</h2>
         <p>RikaiCode uses a <strong>100-point scoring system</strong>. The grade is determined by summing points across five key categories. The system switches between <strong>Remote Analysis</strong> (for GitHub/GitLab) and <strong>Static Analysis</strong> (for local files).</p>
 
-        <h3>Remote Repository Scoring</h3>
+                <h3>Remote Repository Scoring</h3>
         <div class="table-responsive">
           <table class="styled-table">
             <thead>
@@ -203,23 +216,23 @@
             </thead>
             <tbody>
               <tr>
-                <td><strong>Popularity</strong></td>
-                <td>30 pts</td>
-                <td>Based on Stars (0-20 pts) and Fork Ratio (0-10 pts). High stars indicate trust.</td>
+                <td><strong>Maintenance</strong></td>
+                <td>35 pts</td>
+                <td>The biggest quality factor. Rewards low issue backlogs (15 pts) and high PR/MR merge rates (20 pts).</td>
               </tr>
               <tr>
                 <td><strong>Activity</strong></td>
-                <td>25 pts</td>
-                <td>Measures Recency (0-15 pts) and Commit Frequency (0-10 pts).</td>
+                <td>30 pts</td>
+                <td>Measures Recency (15 pts) using a forgiving decay curve, and Commit Frequency (15 pts).</td>
               </tr>
               <tr>
-                <td><strong>Maintenance</strong></td>
-                <td>20 pts</td>
-                <td>Analyzes Open Issues Ratio and PR/MR Merge Rate.</td>
+                <td><strong>Popularity</strong></td>
+                <td>15 pts</td>
+                <td>Logarithmic scaling for Stars (10 pts) and Forks (5 pts). Normal repos can score high.</td>
               </tr>
               <tr>
                 <td><strong>Community</strong></td>
-                <td>15 pts</td>
+                <td>10 pts</td>
                 <td>Based on the number of Watchers.</td>
               </tr>
               <tr>
@@ -244,29 +257,55 @@
             <tbody>
               <tr>
                 <td><strong>Documentation</strong></td>
-                <td>30 pts</td>
-                <td>Checks for README files (10 pts) and Comment Density (20 pts).</td>
+                <td>25 pts</td>
+                <td>Checks for README presence/size (15 pts) and Comment Density (10 pts). Uses forgiving thresholds.</td>
               </tr>
               <tr>
                 <td><strong>Structure</strong></td>
-                <td>30 pts</td>
-                <td>Modularity (avg lines per file) and Organization (entry points).</td>
+                <td>25 pts</td>
+                <td>Modularity (15 pts) allows up to 400 avg lines/file. Organization (10 pts) rewards entry points.</td>
               </tr>
               <tr>
                 <td><strong>Best Practices</strong></td>
-                <td>20 pts</td>
-                <td>Presence of dependency files (15 pts) and .gitignore (5 pts).</td>
+                <td>25 pts</td>
+                <td>Checks for dependency files (10 pts), .gitignore (5 pts), License (5 pts), and CI (5 pts).</td>
               </tr>
               <tr>
                 <td><strong>Scale</strong></td>
-                <td>10 pts</td>
+                <td>15 pts</td>
                 <td>Total lines of code. Larger, mature projects score slightly higher.</td>
               </tr>
               <tr>
                 <td><strong>Stability</strong></td>
                 <td>10 pts</td>
-                <td>Based on file count and structure.</td>
+                <td>Based on file count. Multi-module projects score higher.</td>
               </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Grade Tiers Calculation</h3>
+        <div class="table-responsive">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Score Range</th>
+                <th>Grade</th>
+                <th>Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>95 - 100</strong></td><td>A++</td><td>Exceptional - top-tier project with outstanding metrics.</td></tr>
+              <tr><td><strong>90 - 94</strong></td><td>A+</td><td>Excellent - strong, well-maintained, trusted by the community.</td></tr>
+              <tr><td><strong>85 - 89</strong></td><td>A</td><td>Great - reliable, active, and follows best practices.</td></tr>
+              <tr><td><strong>80 - 84</strong></td><td>A-</td><td>Very good - solid project with minor gaps.</td></tr>
+              <tr><td><strong>75 - 79</strong></td><td>B+</td><td>Good - generally healthy but room for improvement.</td></tr>
+              <tr><td><strong>70 - 74</strong></td><td>B</td><td>Above average - usable but verify specific metrics.</td></tr>
+              <tr><td><strong>65 - 69</strong></td><td>B-</td><td>Fair - functional with notable weaknesses.</td></tr>
+              <tr><td><strong>60 - 64</strong></td><td>C+</td><td>Average - review maintenance and activity carefully.</td></tr>
+              <tr><td><strong>50 - 59</strong></td><td>C</td><td>Below average - possible stagnation or quality concerns.</td></tr>
+              <tr><td><strong>40 - 49</strong></td><td>D</td><td>Weak - likely unmaintained or poorly structured.</td></tr>
+              <tr><td><strong>< 40</strong></td><td>F</td><td>Poor - high risk; do not use without significant review.</td></tr>
             </tbody>
           </table>
         </div>
